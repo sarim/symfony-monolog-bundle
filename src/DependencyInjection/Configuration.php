@@ -457,6 +457,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->scalarNode('id')->end() // service & rollbar
+                ->booleanNode('enabled')->defaultTrue()->end()
                 ->scalarNode('priority')->defaultValue(0)->end()
                 ->scalarNode('level')->defaultValue('DEBUG')->end()
                 ->booleanNode('bubble')->defaultTrue()->end()

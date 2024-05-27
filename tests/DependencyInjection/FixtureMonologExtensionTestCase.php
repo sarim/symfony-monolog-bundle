@@ -253,7 +253,7 @@ abstract class FixtureMonologExtensionTestCase extends DependencyInjectionTestCa
         $this->assertNotContainsEquals(['pushProcessor', [new Reference('monolog.processor.psr_log_message')]], $methodCalls, 'The PSR-3 processor should not be enabled');
     }
 
-    public function testPsrLogMessageProcessorHasConstructorArguments(): void
+    public function testPsrLogMessageProcessorHasConstructorArguments()
     {
         $reflectionConstructor = (new \ReflectionClass(PsrLogMessageProcessor::class))->getConstructor();
         if (null === $reflectionConstructor || $reflectionConstructor->getNumberOfParameters() <= 0) {
@@ -280,7 +280,7 @@ abstract class FixtureMonologExtensionTestCase extends DependencyInjectionTestCa
         }
     }
 
-    public function testPsrLogMessageProcessorDoesNotHaveConstructorArguments(): void
+    public function testPsrLogMessageProcessorDoesNotHaveConstructorArguments()
     {
         $reflectionConstructor = (new \ReflectionClass(PsrLogMessageProcessor::class))->getConstructor();
         if (null !== $reflectionConstructor && $reflectionConstructor->getNumberOfParameters() > 0) {
@@ -321,6 +321,15 @@ abstract class FixtureMonologExtensionTestCase extends DependencyInjectionTestCa
 
         $this->assertSame(NullHandler::class, $logger->getClass());
         $this->assertSame('DEBUG', $logger->getArgument(0));
+    }
+
+    public function testEnabledHandleOption()
+    {
+        $container = $this->getContainer('enabled_handlers');
+
+        $this->assertTrue($container->hasDefinition('monolog.handler.default'));
+        $this->assertTrue($container->hasDefinition('monolog.handler.enabled'));
+        $this->assertFalse($container->hasDefinition('monolog.handler.disabled'));
     }
 
     protected function getContainer($fixture)

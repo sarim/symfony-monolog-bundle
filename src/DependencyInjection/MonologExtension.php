@@ -228,7 +228,7 @@ class MonologExtension extends Extension
                         } elseif ('json' === $handler['publisher']['encoder']) {
                             $encoderClass = 'Gelf\Encoder\JsonEncoder';
                         } else {
-                            throw new InvalidConfigurationException('The gelf message encoder must be either "compressed_json" or "json".');
+                            throw new \RuntimeException('The gelf message encoder must be either "compressed_json" or "json".');
                         }
 
                         $encoder = new Definition($encoderClass);

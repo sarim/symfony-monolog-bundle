@@ -839,7 +839,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('hostname')->end()
                         ->scalarNode('port')->defaultValue(12201)->end()
                         ->scalarNode('chunk_size')->defaultValue(1420)->end()
-                        ->scalarNode('encoder')->end()
+                        ->enumNode('encoder')->values(['json', 'compressed_json'])->end()
                     ->end()
                     ->validate()
                         ->ifTrue(function ($v) {

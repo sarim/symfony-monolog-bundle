@@ -20,7 +20,6 @@ use Monolog\Processor\ProcessorInterface;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Monolog\ResettableInterface;
 use Symfony\Bridge\Monolog\Handler\FingersCrossed\HttpCodeActivationStrategy;
-use Symfony\Bridge\Monolog\Logger as LegacyLogger;
 use Symfony\Bridge\Monolog\Processor\SwitchUserTokenProcessor;
 use Symfony\Bridge\Monolog\Processor\TokenProcessor;
 use Symfony\Bridge\Monolog\Processor\WebProcessor;
@@ -32,7 +31,6 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\HttpKernel\Log\DebugLoggerConfigurator;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
@@ -63,10 +61,6 @@ class MonologExtension extends Extension
         if (isset($config['handlers'])) {
             $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../../config'));
             $loader->load('monolog.php');
-
-            if (!class_exists(DebugLoggerConfigurator::class)) {
-                $container->getDefinition('monolog.logger_prototype')->setClass(LegacyLogger::class);
-            }
 
             $container->setParameter('monolog.use_microseconds', $config['use_microseconds']);
 
@@ -116,6 +110,7 @@ class MonologExtension extends Extension
         }
         $container->registerForAutoconfiguration(TokenProcessor::class)
             ->addTag('monolog.processor');
+
         if (interface_exists(HttpClientInterface::class)) {
             $handlerAutoconfiguration = $container->registerForAutoconfiguration(HandlerInterface::class);
             $handlerAutoconfiguration->setBindings($handlerAutoconfiguration->getBindings() + [
@@ -123,23 +118,21 @@ class MonologExtension extends Extension
             ]);
         }
 
-        if (80000 <= \PHP_VERSION_ID) {
-            $container->registerAttributeForAutoconfiguration(AsMonologProcessor::class, static function (ChildDefinition $definition, AsMonologProcessor $attribute, \Reflector $reflector): void {
-                $tagAttributes = get_object_vars($attribute);
-                if ($reflector instanceof \ReflectionMethod) {
-                    if (isset($tagAttributes['method'])) {
-                        throw new \LogicException(\sprintf('AsMonologProcessor attribute cannot declare a method on "%s::%s()".', $reflector->class, $reflector->name));
-                    }
-
-                    $tagAttributes['method'] = $reflector->getName();
+        $container->registerAttributeForAutoconfiguration(AsMonologProcessor::class, static function (ChildDefinition $definition, AsMonologProcessor $attribute, \Reflector $reflector): void {
+            $tagAttributes = get_object_vars($attribute);
+            if ($reflector instanceof \ReflectionMethod) {
+                if (isset($tagAttributes['method'])) {
+                    throw new \LogicException(\sprintf('AsMonologProcessor attribute cannot declare a method on "%s::%s()".', $reflector->class, $reflector->name));
                 }
 
-                $definition->addTag('monolog.processor', $tagAttributes);
-            });
-            $container->registerAttributeForAutoconfiguration(WithMonologChannel::class, static function (ChildDefinition $definition, WithMonologChannel $attribute): void {
-                $definition->addTag('monolog.logger', ['channel' => $attribute->channel]);
-            });
-        }
+                $tagAttributes['method'] = $reflector->getName();
+            }
+
+            $definition->addTag('monolog.processor', $tagAttributes);
+        });
+        $container->registerAttributeForAutoconfiguration(WithMonologChannel::class, static function (ChildDefinition $definition, WithMonologChannel $attribute): void {
+            $definition->addTag('monolog.logger', ['channel' => $attribute->channel]);
+        });
     }
 
     /**
@@ -877,6 +870,7 @@ class MonologExtension extends Extension
                     $handler['bubble'],
                 ]);
                 break;
+
             case 'newrelic':
                 $definition->setArguments([
                     $handler['level'],
@@ -884,6 +878,7 @@ class MonologExtension extends Extension
                     $handler['app_name'],
                 ]);
                 break;
+
             case 'server_log':
                 $definition->setArguments([
                     $handler['host'],
@@ -891,6 +886,7 @@ class MonologExtension extends Extension
                     $handler['bubble'],
                 ]);
                 break;
+
             case 'sampling':
                 $nestedHandlerId = $this->getHandlerId($handler['handler']);
                 $this->markNestedHandler($nestedHandlerId);

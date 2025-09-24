@@ -28,21 +28,33 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php: [ '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3' ]
-                monolog: [ '1.*', '2.*' ]
+                php: [ '8.1', '8.2', '8.3', '8.4' ]
+                monolog: [ '2.*' ]
+                symfony: [ '6.4.*' ]
                 include:
+                    -   php: '7.2'
+                        symfony: '5.4.*'
+                        monolog: '1.*'
                     -   php: '7.4'
                         deps: lowest
+                        symfony: '5.4.*'
                         deprecations: max[self]=0
                     -   php: '8.1'
                         monolog: '3.*'
+                        symfony: '6.4.*'
                     -   php: '8.2'
                         monolog: '3.*'
+                        symfony: '7.3.*'
                     -   php: '8.3'
                         monolog: '3.*'
+                        symfony: '7.3.*'
                     -   php: '8.4'
                         deps: highest
                         monolog: '3.*'
+                        symfony: '7.4.*'
+
+        env:
+            SYMFONY_REQUIRE: ${{ matrix.symfony }}
 
         steps:
             -   name: Checkout

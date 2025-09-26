@@ -527,7 +527,7 @@ class MonologExtensionTest extends DependencyInjectionTestCase
             ]]]]);
             $this->fail();
         } catch (InvalidConfigurationException $e) {
-            $this->assertStringContainsString('-us, apache$', $e->getMessage());
+            $this->assertSame('The following Loggly tags are invalid: "-us", "apache$".', $e->getMessage());
         }
 
         $container = $this->getContainer([['handlers' => ['loggly' => [

@@ -233,7 +233,7 @@ class MonologExtension extends Extension
 
                     $publisher->setPublic(false);
                 } else {
-                    throw new \RuntimeException('The gelf handler requires the graylog2/gelf-php package to be installed');
+                    throw new \RuntimeException('The gelf handler requires the graylog2/gelf-php package to be installed.');
                 }
 
                 $definition->setArguments([
@@ -330,7 +330,7 @@ class MonologExtension extends Extension
 
             case 'telegram':
                 if (!class_exists('Monolog\Handler\TelegramBotHandler')) {
-                    throw new \RuntimeException('The TelegramBotHandler is not available. Please update "monolog/monolog" to 2.2.0');
+                    throw new \RuntimeException('The TelegramBotHandler is not available. Please update "monolog/monolog" to 2.2.0.');
                 }
 
                 $definition->setArguments([
@@ -916,7 +916,7 @@ class MonologExtension extends Extension
                     $nullWarning = ', if you meant to define a null handler in a yaml config, make sure you quote "null" so it does not get converted to a php null';
                 }
 
-                throw new \InvalidArgumentException(\sprintf('Invalid handler type "%s" given for handler "%s"'.$nullWarning, $handler['type'], $name));
+                throw new \InvalidArgumentException(\sprintf('Invalid handler type "%s" given for handler "%s".'.$nullWarning, $handler['type'], $name));
         }
 
         if (!empty($handler['nested']) && true === $handler['nested']) {

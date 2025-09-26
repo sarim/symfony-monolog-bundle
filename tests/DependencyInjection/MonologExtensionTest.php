@@ -17,6 +17,7 @@ use Monolog\Handler\FingersCrossed\ErrorLevelActivationStrategy;
 use Monolog\Handler\RollbarHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
+use Symfony\Bridge\PhpUnit\ExpectUserDeprecationMessageTrait;
 use Symfony\Bundle\MonologBundle\DependencyInjection\Compiler\LoggerChannelPass;
 use Symfony\Bundle\MonologBundle\DependencyInjection\MonologExtension;
 use Symfony\Bundle\MonologBundle\Tests\DependencyInjection\Fixtures\AsMonologProcessor\FooProcessor;
@@ -32,6 +33,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class MonologExtensionTest extends DependencyInjectionTestCase
 {
+    use ExpectUserDeprecationMessageTrait;
+
     public function testLoadWithDefault()
     {
         $container = $this->getContainer([['handlers' => ['main' => ['type' => 'stream']]]]);
@@ -303,6 +306,7 @@ class MonologExtensionTest extends DependencyInjectionTestCase
         }
     }
 
+    /** @group legacy */
     public function testRavenHandlerWhenADSNIsSpecified()
     {
         if (Logger::API !== 1) {
@@ -310,6 +314,8 @@ class MonologExtensionTest extends DependencyInjectionTestCase
 
             return;
         }
+
+        $this->expectDeprecation('Since symfony/monolog-bundle 3.11: The "raven" handler type is deprecated, use the "sentry/sentry-symfony" and a "service" handler instead.');
 
         $dsn = 'http://43f6017361224d098402974103bfc53d:a6a0538fc2934ba2bed32e08741b2cd3@marca.python.live.cheggnet.com:9000/1';
 
@@ -329,6 +335,7 @@ class MonologExtensionTest extends DependencyInjectionTestCase
         $this->assertDICDefinitionClass($handler, 'Monolog\Handler\RavenHandler');
     }
 
+    /** @group legacy */
     public function testRavenHandlerWhenADSNAndAClientAreSpecified()
     {
         if (Logger::API !== 1) {
@@ -336,6 +343,8 @@ class MonologExtensionTest extends DependencyInjectionTestCase
 
             return;
         }
+
+        $this->expectDeprecation('Since symfony/monolog-bundle 3.11: The "raven" handler type is deprecated, use the "sentry/sentry-symfony" and a "service" handler instead.');
 
         $container = $this->getContainer([['handlers' => ['raven' => [
             'type' => 'raven', 'dsn' => 'foobar', 'client_id' => 'raven.client',
@@ -349,6 +358,7 @@ class MonologExtensionTest extends DependencyInjectionTestCase
         $this->assertDICConstructorArguments($handler, [new Reference('raven.client'), 'DEBUG', true]);
     }
 
+    /** @group legacy */
     public function testRavenHandlerWhenAClientIsSpecified()
     {
         if (Logger::API !== 1) {
@@ -356,6 +366,8 @@ class MonologExtensionTest extends DependencyInjectionTestCase
 
             return;
         }
+
+        $this->expectDeprecation('Since symfony/monolog-bundle 3.11: The "raven" handler type is deprecated, use the "sentry/sentry-symfony" and a "service" handler instead.');
 
         $container = $this->getContainer([['handlers' => ['raven' => [
             'type' => 'raven', 'client_id' => 'raven.client',
@@ -377,8 +389,11 @@ class MonologExtensionTest extends DependencyInjectionTestCase
         $this->getContainer([['handlers' => ['sentry' => ['type' => 'sentry']]]]);
     }
 
+    /** @group legacy */
     public function testSentryHandlerWhenADSNIsSpecified()
     {
+        $this->expectDeprecation('Since symfony/monolog-bundle 3.11: The "sentry" handler type is deprecated, use the "sentry/sentry-symfony" and a "service" handler instead.');
+
         $dsn = 'http://43f6017361224d098402974103bfc53d:a6a0538fc2934ba2bed32e08741b2cd3@marca.python.live.cheggnet.com:9000/1';
 
         $container = $this->getContainer([['handlers' => ['sentry' => [
@@ -401,8 +416,11 @@ class MonologExtensionTest extends DependencyInjectionTestCase
         $this->assertDICConstructorArguments($hub, [new Reference('monolog.sentry.client.'.sha1($dsn))]);
     }
 
+    /** @group legacy */
     public function testSentryHandlerWhenADSNAndAClientAreSpecified()
     {
+        $this->expectDeprecation('Since symfony/monolog-bundle 3.11: The "sentry" handler type is deprecated, use the "sentry/sentry-symfony" and a "service" handler instead.');
+
         $container = $this->getContainer(
             [
                 [
@@ -433,8 +451,11 @@ class MonologExtensionTest extends DependencyInjectionTestCase
         $this->assertDICConstructorArguments($hub, [new Reference('sentry.client')]);
     }
 
+    /** @group legacy */
     public function testSentryHandlerWhenAClientIsSpecified()
     {
+        $this->expectDeprecation('Since symfony/monolog-bundle 3.11: The "sentry" handler type is deprecated, use the "sentry/sentry-symfony" and a "service" handler instead.');
+
         $container = $this->getContainer(
             [
                 [
@@ -464,8 +485,11 @@ class MonologExtensionTest extends DependencyInjectionTestCase
         $this->assertDICConstructorArguments($hub, [new Reference('sentry.client')]);
     }
 
+    /** @group legacy */
     public function testSentryHandlerWhenAHubIsSpecified()
     {
+        $this->expectDeprecation('Since symfony/monolog-bundle 3.11: The "sentry" handler type is deprecated, use the "sentry/sentry-symfony" and a "service" handler instead.');
+
         $container = $this->getContainer(
             [
                 [

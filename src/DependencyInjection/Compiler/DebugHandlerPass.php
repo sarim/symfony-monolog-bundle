@@ -31,7 +31,7 @@ class DebugHandlerPass implements CompilerPassInterface
 
     public function __construct(LoggerChannelPass $channelPass)
     {
-        @trigger_error('The '.__CLASS__.' class is deprecated since version 2.12 and will be removed in 4.0. Use AddDebugLogProcessorPass in FrameworkBundle instead.', \E_USER_DEPRECATED);
+        trigger_deprecation('symfony/monolog-bundle', '2.12', 'The %s class is deprecated and will be removed in 4.0. Use AddDebugLogProcessorPass in FrameworkBundle instead.', __CLASS__);
 
         $this->channelPass = $channelPass;
     }

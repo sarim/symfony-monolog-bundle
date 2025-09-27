@@ -242,7 +242,7 @@ class MonologExtension extends Extension
                     $publisher->setPublic(false);
                 } elseif (class_exists('Gelf\MessagePublisher')) {
                     if (isset($handler['publisher']['encoder']) && 'compressed_json' !== $handler['publisher']['encoder']) {
-                        throw new InvalidConfigurationException('The Gelf\MessagePublisher publisher supports only the compressed json encoding. Omit the option to use the default encoding or use "compressed_json" as the encoder option.');
+                        throw new \RuntimeException('The Gelf\MessagePublisher publisher supports only the compressed json encoding. Omit the option to use the default encoding or use "compressed_json" as the encoder option.');
                     }
                     $publisher = new Definition('Gelf\MessagePublisher', [
                         $handler['publisher']['hostname'],

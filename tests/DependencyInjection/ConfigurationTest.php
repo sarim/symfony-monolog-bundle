@@ -111,7 +111,7 @@ class ConfigurationTest extends TestCase
         $this->assertEquals('gelf.publisher', $config['handlers']['gelf']['publisher']['id']);
     }
 
-    public function testGelfPublisherWithEncoder(): void
+    public function testGelfPublisherWithEncoder()
     {
         $configs = [
             [

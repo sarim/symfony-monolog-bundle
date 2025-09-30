@@ -272,7 +272,7 @@ class MonologExtension extends Extension
                 break;
 
             case 'elasticsearch':
-                @trigger_error('The "elasticsearch" handler type is deprecated in MonologBundle since version 3.8.0, use the "elastica" type instead, or switch to the official Elastic client using the "elastic_search" type.', \E_USER_DEPRECATED);
+                trigger_deprecation('symfony/monolog-bundle', '3.8', 'The "elasticsearch" handler type is deprecated in MonologBundle since version 3.8.0, use the "elastica" type instead, or switch to the official Elastic client using the "elastic_search" type.');
                 // no break
 
             case 'elastica':
@@ -413,7 +413,7 @@ class MonologExtension extends Extension
                     $activation = new Reference($handler['activation_strategy']);
                 } elseif (!empty($handler['excluded_404s'])) {
                     if (class_exists(HttpCodeActivationStrategy::class)) {
-                        @trigger_error('The "excluded_404s" option is deprecated in MonologBundle since version 3.4.0, you should rely on the "excluded_http_codes" option instead.', \E_USER_DEPRECATED);
+                        trigger_deprecation('symfony/monolog-bundle', '3.4', 'The "excluded_404s" option is deprecated, you should rely on the "excluded_http_codes" option instead.');
                     }
                     $activationDef = new Definition('Symfony\Bridge\Monolog\Handler\FingersCrossed\NotFoundActivationStrategy', [
                         new Reference('request_stack'),
@@ -720,6 +720,7 @@ class MonologExtension extends Extension
                 break;
 
             case 'sentry':
+                trigger_deprecation('symfony/monolog-bundle', '3.11', 'The "sentry" handler type is deprecated, use the "sentry/sentry-symfony" and a "service" handler instead.');
                 if (null !== $handler['hub_id']) {
                     $hubId = $handler['hub_id'];
                 } else {
@@ -771,6 +772,7 @@ class MonologExtension extends Extension
                 break;
 
             case 'raven':
+                trigger_deprecation('symfony/monolog-bundle', '3.11', 'The "raven" handler type is deprecated, use the "sentry/sentry-symfony" and a "service" handler instead.');
                 if (null !== $handler['client_id']) {
                     $clientId = $handler['client_id'];
                 } else {

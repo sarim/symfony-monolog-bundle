@@ -16,6 +16,11 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
+/**
+ * XML configuration deprecated since Symfony 7.4.
+ *
+ * @group legacy
+ */
 class XmlMonologExtensionTest extends FixtureMonologExtensionTestCase
 {
     protected function loadFixture(ContainerBuilder $container, $fixture)

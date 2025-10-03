@@ -12,6 +12,7 @@
 namespace Symfony\Bundle\MonologBundle\Tests\DependencyInjection;
 
 use Monolog\Handler\FingersCrossed\ErrorLevelActivationStrategy;
+use Monolog\Handler\NoopHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Symfony\Bundle\MonologBundle\DependencyInjection\Compiler\LoggerChannelPass;
 use Symfony\Bundle\MonologBundle\DependencyInjection\MonologExtension;
@@ -233,9 +234,11 @@ abstract class FixtureMonologExtensionTestCase extends DependencyInjectionTestCa
         if (\Monolog\Logger::API < 2) {
             $this->markTestSkipped('This test requires Monolog v2 or above');
         }
-        $this->getContainer('handlers');
+        $container = $this->getContainer('handlers');
 
-        $this->expectNotToPerformAssertions();
+        $this->assertTrue($container->hasDefinition('monolog.handler.noop'));
+        $this->assertSame(NoopHandler::class, $container->getDefinition('monolog.handler.noop')->getClass());
+        $this->assertSame(['DEBUG', true], $container->getDefinition('monolog.handler.noop')->getArguments());
     }
 
     public function testPsr3MessageProcessingDisabled()

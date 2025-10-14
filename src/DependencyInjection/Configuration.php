@@ -451,10 +451,9 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('type')
                     ->isRequired()
-                    ->treatNullLike('null')
                     ->beforeNormalization()
-                        ->always()
-                        ->then(function ($v) { return strtolower($v); })
+                        ->ifString()->then(function ($v) { return strtolower($v); })
+                        ->ifNull()->then(function ($v) { return 'null'; })
                     ->end()
                 ->end()
                 ->scalarNode('id')->end() // service & rollbar

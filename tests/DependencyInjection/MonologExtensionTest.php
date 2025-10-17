@@ -13,6 +13,8 @@ namespace Symfony\Bundle\MonologBundle\Tests\DependencyInjection;
 
 use Monolog\Attribute\AsMonologProcessor;
 use Monolog\Attribute\WithMonologChannel;
+use Monolog\Handler\ElasticaHandler;
+use Monolog\Handler\ElasticsearchHandler;
 use Monolog\Handler\FingersCrossed\ErrorLevelActivationStrategy;
 use Monolog\Handler\RollbarHandler;
 use Monolog\Logger;
@@ -874,6 +876,60 @@ class MonologExtensionTest extends DependencyInjectionTestCase
                 'channel' => 'fixture',
             ],
         ], $container->getDefinition(ServiceWithChannel::class)->getTag('monolog.logger'));
+    }
+
+    public function testElasticsearchAndElasticaHandlers()
+    {
+        if (Logger::API < 2) {
+            $this->markTestSkipped('Monolog >= 2 is needed.');
+        }
+
+        $container = new ContainerBuilder();
+        $container->setDefinition('elasticsearch.client', new Definition('Elasticsearch\\Client'));
+        $container->setDefinition('elastica.client', new Definition('Elastica\\Client'));
+
+        $config = [[
+            'handlers' => [
+                'es_handler' => [
+                    'type' => 'elastic_search',
+                    'elasticsearch' => [
+                        'hosts' => ['es:9200'],
+                    ],
+                    'index' => 'my-index',
+                    'document_type' => 'my-type',
+                ],
+                'elastica_handler' => [
+                    'type' => 'elastica',
+                    'elasticsearch' => [
+                        'hosts' => ['es:9200'],
+                    ],
+                    'index' => 'my-index',
+                    'document_type' => 'my-type',
+                ],
+            ],
+        ]];
+
+        $extension = new MonologExtension();
+        $extension->load($config, $container);
+
+        $this->assertTrue($container->hasDefinition('monolog.handler.es_handler'));
+        $this->assertTrue($container->hasDefinition('monolog.handler.elastica_handler'));
+
+        // Elasticsearch handler should receive the elasticsearch.client as first argument
+        $esHandler = $container->getDefinition('monolog.handler.es_handler');
+        $this->assertSame(ElasticsearchHandler::class,$esHandler->getClass());
+        $esClient = $esHandler->getArgument(0);
+        $this->assertInstanceOf(Definition::class, $esClient);
+        $this->assertStringEndsWith('Elasticsearch\Client', $esClient->getClass());
+        $this->assertSame(['hosts' => ['es:9200']], $esClient->getArgument(0));
+
+        // Elastica handler should receive the elastica.client as first argument
+        $elasticaHandler = $container->getDefinition('monolog.handler.elastica_handler');
+        $this->assertSame(ElasticaHandler::class,$elasticaHandler->getClass());
+        $elasticaClient = $elasticaHandler->getArgument(0);
+        $this->assertInstanceOf(Definition::class, $elasticaClient);
+        $this->assertSame('Elastica\Client', $elasticaClient->getClass());
+        $this->assertSame(['hosts' => ['es:9200'], 'transport' => 'Http'], $elasticaClient->getArgument(0));
     }
 
     protected function getContainer(array $config = [], array $thirdPartyDefinitions = []): ContainerBuilder

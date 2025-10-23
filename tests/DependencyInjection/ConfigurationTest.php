@@ -541,7 +541,7 @@ class ConfigurationTest extends TestCase
     /**
      * @dataProvider processPsr3MessagesProvider
      */
-    public function testWithProcessPsr3Messages(array $configuration, array $processedConfiguration): void
+    public function testWithProcessPsr3Messages(array $configuration, array $processedConfiguration)
     {
         $configs = [
             [

@@ -788,7 +788,7 @@ class MonologExtensionTest extends DependencyInjectionTestCase
     /**
      * @requires PHP 8.0
      */
-    public function testAsMonologProcessorAutoconfigurationRedeclareMethod(): void
+    public function testAsMonologProcessorAutoconfigurationRedeclareMethod()
     {
         if (!class_exists(AsMonologProcessor::class, true)) {
             $this->markTestSkipped('Monolog >= 2.3.6 is needed.');
@@ -805,7 +805,7 @@ class MonologExtensionTest extends DependencyInjectionTestCase
     /**
      * @requires PHP 8.0
      */
-    public function testAsMonologProcessorAutoconfiguration(): void
+    public function testAsMonologProcessorAutoconfiguration()
     {
         if (!class_exists(AsMonologProcessor::class, true) || property_exists(AsMonologProcessor::class, 'priority')) {
             $this->markTestSkipped('Monolog >= 2.3.6 and < 3.4.0 is needed.');
@@ -832,7 +832,7 @@ class MonologExtensionTest extends DependencyInjectionTestCase
     /**
      * @requires PHP 8.0
      */
-    public function testAsMonologProcessorAutoconfigurationWithPriority(): void
+    public function testAsMonologProcessorAutoconfigurationWithPriority()
     {
         if (!class_exists(AsMonologProcessor::class, true) || !property_exists(AsMonologProcessor::class, 'priority')) {
             $this->markTestSkipped('Monolog >= 3.4.0 is needed.');
@@ -861,7 +861,7 @@ class MonologExtensionTest extends DependencyInjectionTestCase
     /**
      * @requires PHP 8.0
      */
-    public function testWithLoggerChannelAutoconfiguration(): void
+    public function testWithLoggerChannelAutoconfiguration()
     {
         if (!class_exists(WithMonologChannel::class)) {
             $this->markTestSkipped('Monolog >= 3.5.0 is needed.');
@@ -917,7 +917,7 @@ class MonologExtensionTest extends DependencyInjectionTestCase
 
         // Elasticsearch handler should receive the elasticsearch.client as first argument
         $esHandler = $container->getDefinition('monolog.handler.es_handler');
-        $this->assertSame(ElasticsearchHandler::class,$esHandler->getClass());
+        $this->assertSame(ElasticsearchHandler::class, $esHandler->getClass());
         $esClient = $esHandler->getArgument(0);
         $this->assertInstanceOf(Definition::class, $esClient);
         $this->assertStringEndsWith('Elasticsearch\Client', $esClient->getClass());
@@ -925,7 +925,7 @@ class MonologExtensionTest extends DependencyInjectionTestCase
 
         // Elastica handler should receive the elastica.client as first argument
         $elasticaHandler = $container->getDefinition('monolog.handler.elastica_handler');
-        $this->assertSame(ElasticaHandler::class,$elasticaHandler->getClass());
+        $this->assertSame(ElasticaHandler::class, $elasticaHandler->getClass());
         $elasticaClient = $elasticaHandler->getArgument(0);
         $this->assertInstanceOf(Definition::class, $elasticaClient);
         $this->assertSame('Elastica\Client', $elasticaClient->getClass());

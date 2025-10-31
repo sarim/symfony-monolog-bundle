@@ -518,9 +518,15 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('excluded_http_codes') // fingers_crossed
+                    ->info('Only for "fingers_crossed" handler type')
+                    ->example([403, 404, [400 => ['^/foo', '^/bar']]])
                     ->canBeUnset()
                     ->beforeNormalization()
                         ->always(function ($values) {
+                            if (false === $values) {
+                                return false;
+                            }
+
                             return array_map(function ($value) {
                                 /*
                                  * Allows YAML:
